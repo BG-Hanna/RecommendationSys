@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% from "macros.html" import product_card %}
+{% block title %}Mon profil{% endblock %}
+{% block content %}
+<section class="page-head">
+  <h1>Mon profil</h1>
+  <p class="muted">Connecté en tant que <strong>{{ current_user.username }}</strong> · {{ current_user.email }}</p>
+</section>
+
+<div class="grid-2">
+  <form method="post" class="card form">
+    <h2>Mes centres d'intérêt</h2>
+    <input type="hidden" name="action" value="interests">
+    {% for key, topic in interests.items() %}
+      <label class="check-row">
+        <input type="checkbox" name="interests" value="{{ key }}" {% if key in selected %}checked{% endif %}>
+        {{ topic.label }}
+      </label>
+    {% endfor %}
+    <button class="btn btn-primary" type="submit">Enregistrer</button>
+  </form>
+
+  <form method="post" class="card form">
+    <h2>Préférence de budget</h2>
+    <p class="muted small">Le budget maximum est appliqué automatiquement à vos recommandations.</p>
+    <input type="hidden" name="action" value="budget">
+    <label>Budget maximum (DZD)
+      <input type="number" name="budget_max" min="0" value="{{ current_user.budget_max or '' }}" placeholder="Aucun">
+    </label>
+    <button class="btn btn-primary" type="submit">Enregistrer</button>
+  </form>
+</div>
+
+<section>
+  <div class="section-head"><h2>Mes favoris ({{ favorites|length }})</h2></div>
+  {% if favorites %}
+  <div class="product-grid">
+    {% for p in favorites %}{{ product_card(p, liked=true) }}{% endfor %}
+  </div>
+  {% else %}<p class="muted">Aucun favori.</p>{% endif %}
+</section>
+{% endblock %}

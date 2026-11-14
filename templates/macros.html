@@ -1,0 +1,23 @@
+{# Reusable product card. Used by home, search, favorites, product and research pages. #}
+{% macro product_card(p, liked=False, score=None, in_budget=True, reason=None) %}
+<article class="card product-card">
+  <a class="product-img" href="{{ url_for('main.product_detail', product_id=p.id) }}">
+    <img src="{{ p.image_url }}" alt="{{ p.name }}" loading="lazy">
+  </a>
+  <div class="product-body">
+    <span class="tag">{{ p.category }}</span>
+    <h3><a href="{{ url_for('main.product_detail', product_id=p.id) }}">{{ p.name }}</a></h3>
+    <p class="meta">{{ p.brand }} · {{ p.availability }}</p>
+    <p class="price">{{ p.price|dzd }}</p>
+    {% if score is not none %}<p class="score">Score : {{ "%.3f"|format(score) }}</p>{% endif %}
+    {% if not in_budget %}<span class="badge badge-warn">Hors budget</span>{% endif %}
+    {% if reason %}<p class="reason">{{ reason }}</p>{% endif %}
+    <form method="post" action="{{ url_for('main.toggle_favorite', product_id=p.id) }}">
+      <input type="hidden" name="next" value="{{ request.full_path }}">
+      <button type="submit" class="btn like {{ 'active' if liked }}">
+        {{ '♥ Dans mes favoris' if liked else '♡ Ajouter aux favoris' }}
+      </button>
+    </form>
+  </div>
+</article>
+{% endmacro %}

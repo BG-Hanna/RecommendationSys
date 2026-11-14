@@ -1,0 +1,73 @@
+{
+  "synonyms": {
+    "chaudiere": ["chaudiere a gaz", "chaudiere electrique", "generateur de chaleur"],
+    "robinet": ["mitigeur", "robinetterie"],
+    "chauffage": ["systeme de chauffage"],
+    "radiateur": ["convecteur", "emetteur de chaleur"],
+    "pompe": ["circulateur", "surpresseur"],
+    "tuyau": ["tube", "canalisation", "conduite"],
+    "fuite": ["goutte", "suintement", "infiltration"],
+    "thermostat": ["regulateur", "commande de temperature"],
+    "wc": ["toilette", "cuvette"],
+    "climatisation": ["climatiseur", "split"],
+    "chauffe eau": ["ballon d eau chaude", "cumulus"]
+  },
+  "related": {
+    "chaudiere": ["radiateur", "thermostat", "chauffage"],
+    "pompe": ["pression", "debit"],
+    "chauffe eau": ["ballon", "eau chaude"],
+    "radiateur": ["chauffage", "purgeur"],
+    "robinet": ["lavabo", "douche", "eau"],
+    "tuyau": ["raccord", "per", "cuivre"],
+    "fuite": ["joint", "colle", "reparation"],
+    "salle de bain": ["lavabo", "douche", "wc"],
+    "thermostat": ["regulation", "programmable"]
+  },
+  "concepts": {
+    "chauffage central": ["chaudiere", "radiateur", "tuyauterie", "thermostat"],
+    "installation sanitaire": ["lavabo", "robinetterie", "evacuation"],
+    "production d eau chaude": ["chauffe eau", "ballon thermodynamique"]
+  },
+  "interests": {
+    "heating_systems": {
+      "label": "Systèmes de chauffage",
+      "categories": ["Chaudières", "Pompes à chaleur", "Thermostats et régulation"],
+      "keywords": "chauffage chaudiere pompe a chaleur thermostat radiateur"
+    },
+    "boilers": {
+      "label": "Chaudières",
+      "categories": ["Chaudières"],
+      "keywords": "chaudiere gaz condensation chauffage central"
+    },
+    "radiators": {
+      "label": "Radiateurs",
+      "categories": ["Radiateurs"],
+      "keywords": "radiateur chauffage acier fonte convecteur"
+    },
+    "water_heaters": {
+      "label": "Chauffe-eau",
+      "categories": ["Chauffe-eau"],
+      "keywords": "chauffe eau ballon eau chaude sanitaire"
+    },
+    "plumbing": {
+      "label": "Plomberie",
+      "categories": ["Tuyauterie et raccords", "Robinetterie"],
+      "keywords": "plomberie tuyau raccord robinet canalisation"
+    },
+    "water_pumps": {
+      "label": "Pompes à eau",
+      "categories": ["Pompes et circulateurs"],
+      "keywords": "pompe eau surpresseur pression debit"
+    },
+    "bathroom": {
+      "label": "Salle de bain",
+      "categories": ["Salle de bain", "Robinetterie"],
+      "keywords": "salle de bain lavabo douche wc sanitaire"
+    },
+    "installation_repair": {
+      "label": "Installation et réparation",
+      "categories": ["Accessoires", "Tuyauterie et raccords"],
+      "keywords": "installation reparation fuite joint purgeur vase"
+    }
+  }
+}

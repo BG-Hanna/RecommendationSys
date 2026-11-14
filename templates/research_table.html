@@ -1,0 +1,12 @@
+{% if rows %}
+<table>
+  <thead><tr><th>Rang</th><th>Produit</th><th>Score</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr><td>{{ r.rank }}</td><td>{{ r.product.name }}</td><td>{{ "%.3f"|format(r.score) }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  <p class="muted">Aucun produit trouvé.</p>
+{% endif %}

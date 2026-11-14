@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% from "macros.html" import product_card %}
+{% block title %}Recherche{% endblock %}
+{% block content %}
+<section class="page-head">
+  <h1>Recherche de produits</h1>
+</section>
+
+<form class="card search-form-wide" method="get" action="{{ url_for('main.search') }}">
+  <div class="search-wrap">
+    <input class="search-input" type="search" name="q" value="{{ query }}" placeholder="Ex. : chaudière économique, radiateur, robinet mitigeur…" data-suggest autocomplete="off">
+    <div class="suggestions" hidden></div>
+  </div>
+  <div class="filters">
+    <label>Catégorie
+      <select name="category">
+        <option value="">Toutes les catégories</option>
+        {% for c in categories %}
+          <option value="{{ c }}" {% if c == category %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Budget minimum (DZD)
+      <input type="number" name="min" min="0" value="{{ budget.min or '' }}">
+    </label>
+    <label>Budget maximum (DZD)
+      <input type="number" name="max" min="0" value="{{ budget.max or '' }}">
+    </label>
+    <label>Budget exact (±10 %)
+      <input type="number" name="exact" min="0" value="{{ budget.exact or '' }}">
+    </label>
+    <label>Filtrage
+      <select name="strict">
+        <option value="1" {% if budget.strict %}selected{% endif %}>Strict : masquer hors budget</option>
+        <option value="0" {% if not budget.strict %}selected{% endif %}>Souple : afficher en dernier</option>
+      </select>
+    </label>
+    <button class="btn btn-primary" type="submit">Appliquer</button>
+  </div>
+</form>
+
+{% if query and terms %}
+<p class="expansion-line">
+  <strong>Termes ajoutés automatiquement :</strong>
+  {% for t in terms %}<span class="chip">{{ t }}</span>{% endfor %}
+</p>
+{% endif %}
+
+<p class="muted small result-count">{{ results|length }} résultat(s)</p>
+{% if results %}
+<div class="product-grid">
+  {% for r in results %}
+    {{ product_card(r.product, liked=(r.product.id in liked_ids), score=r.score, in_budget=r.in_budget) }}
+  {% endfor %}
+</div>
+{% else %}
+  <div class="card empty">Aucun produit ne correspond à votre recherche ou à votre budget.</div>
+{% endif %}
+{% endblock %}

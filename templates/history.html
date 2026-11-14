@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Historique{% endblock %}
+{% block content %}
+<section class="page-head page-head-row">
+  <div>
+    <h1>Historique des recherches</h1>
+    <p class="muted">Relancez une recherche en un clic.</p>
+  </div>
+  {% if rows %}
+  <form method="post" action="{{ url_for('main.clear_history') }}">
+    <button class="btn btn-ghost" type="submit">Effacer l'historique</button>
+  </form>
+  {% endif %}
+</section>
+{% if rows %}
+<div class="card table-wrap">
+  <table>
+    <thead><tr><th>Date</th><th>Recherche</th><th>Termes après expansion</th><th></th></tr></thead>
+    <tbody>
+    {% for row in rows %}
+      <tr>
+        <td class="small">{{ row.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+        <td><strong>{{ row.original_query }}</strong></td>
+        <td class="small">{{ row.expanded_query }}</td>
+        <td><a class="btn btn-small" href="{{ url_for('main.repeat_search', entry_id=row.id) }}">Relancer</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+  <div class="card empty">Aucune recherche pour le moment.</div>
+{% endif %}
+{% endblock %}

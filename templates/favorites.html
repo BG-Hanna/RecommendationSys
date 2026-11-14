@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "macros.html" import product_card %}
+{% block title %}Favoris{% endblock %}
+{% block content %}
+<section class="page-head">
+  <h1>Mes favoris</h1>
+  <p class="muted">Vos favoris alimentent vos recommandations.</p>
+</section>
+{% if products %}
+<div class="product-grid">
+  {% for p in products %}{{ product_card(p, liked=true) }}{% endfor %}
+</div>
+{% else %}
+  <div class="card empty">Vous n'avez pas encore de favoris. Cliquez sur ♡ dans les résultats de recherche.</div>
+{% endif %}
+{% endblock %}

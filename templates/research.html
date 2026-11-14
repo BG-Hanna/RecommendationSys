@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Espace recherche{% endblock %}
+{% block content %}
+<section class="page-head">
+  <h1>Espace recherche · démonstration académique</h1>
+  <p class="muted">Cet espace montre les étapes internes : analyse de la requête, expansion, TF-IDF et BM25. Les clients n'ont pas besoin de cette partie.</p>
+</section>
+
+<form method="get" class="card research-form">
+  <div class="search-wrap">
+    <input class="search-input" type="search" name="q" value="{{ query }}" placeholder="Requête à analyser, ex. : chauffage central" required data-suggest autocomplete="off">
+    <div class="suggestions" hidden></div>
+  </div>
+  <div class="filters">
+    <label>Modèle affiché
+      <select name="model">
+        <option value="compare" {% if model == 'compare' %}selected{% endif %}>Comparer TF-IDF et BM25</option>
+        <option value="tfidf" {% if model == 'tfidf' %}selected{% endif %}>TF-IDF + cosinus</option>
+        <option value="bm25" {% if model == 'bm25' %}selected{% endif %}>BM25</option>
+      </select>
+    </label>
+    <fieldset class="checks">
+      <legend>Méthodes d'expansion</legend>
+      {% for m in all_methods %}
+        <label><input type="checkbox" name="methods" value="{{ m }}" {% if m in methods %}checked{% endif %}> {{ method_labels[m] }}</label>
+      {% endfor %}
+    </fieldset>
+    <button class="btn btn-primary" type="submit">Analyser</button>
+  </div>
+</form>
+
+{% if eq %}
+<section class="card">
+  <h2>Query Expansion Inspector</h2>
+  <ol class="steps">
+    <li>
+      <strong>Étape 1 · Termes identifiés</strong>
+      <div>{% for t in eq.terms %}<span class="chip">{{ t }}</span>{% else %}<span class="muted">aucun terme</span>{% endfor %}</div>
+    </li>
+    <li>
+      <strong>Étape 2 · Expansion</strong>
+      {% for m in all_methods %}
+        <div class="method-block">
+          <h3>{{ method_labels[m] }}</h3>
+          {% if eq.added[m] %}
+            <ul class="term-list">
+              {% for row in eq.added[m] %}
+                <li><span class="chip chip-{{ m }}">{{ row.term }}</span>
+                  <span class="muted small">← {{ row.source }} · poids {{ row.weight }}</span></li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="muted small">Aucun terme ajouté par cette méthode.</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </li>
+    <li>
+      <strong>Étape 3 · Requête finale pondérée</strong>
+      <div>{% for term, w in eq.weights.items() %}<span class="chip">{{ term }} × {{ w }}</span>{% endfor %}</div>
+    </li>
+    <li><strong>Étape 4 · Classement</strong> — les termes pondérés sont envoyés à TF-IDF + cosinus et/ou à BM25.</li>
+  </ol>
+</section>
+
+<section class="grid-2">
+  {% if model in ['compare', 'tfidf'] %}
+  <div class="card">
+    <h2>TF-IDF + cosinus</h2>
+    <p class="muted small">Score = similarité cosinus entre 0 et 1.</p>
+    {% with rows = tfidf_rows %}{% include "research_table.html" %}{% endwith %}
+  </div>
+  {% endif %}
+  {% if model in ['compare', 'bm25'] %}
+  <div class="card">
+    <h2>BM25</h2>
+    <p class="muted small">Score = pertinence BM25 (non borné).</p>
+    {% with rows = bm25_rows %}{% include "research_table.html" %}{% endwith %}
+  </div>
+  {% endif %}
+</section>
+
+{% if model == 'compare' %}
+<section class="card">
+  <p><strong>Chevauchement des Top-5 (indice de Jaccard) :</strong> {{ "%.2f"|format(overlap) }}</p>
+  <p class="muted small">Les scores TF-IDF (cosinus) et BM25 n'ont pas la même échelle : comparez surtout les <strong>rangs</strong> des produits.</p>
+</section>
+{% endif %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% from "macros.html" import product_card %}
+{% block title %}Accueil{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <h1>Tout pour votre chauffage et votre plomberie</h1>
+    <p>Chaudières, radiateurs, chauffe-eau, robinetterie et bien plus. Trouvez le bon produit en quelques mots.</p>
+  </div>
+  <form class="search-form" method="get" action="{{ url_for('main.search') }}">
+    <div class="search-wrap">
+      <input class="search-input" type="search" name="q" placeholder="Ex. : chaudière économique, robinet mitigeur…" data-suggest autocomplete="off">
+      <div class="suggestions" hidden></div>
+    </div>
+    <button class="btn btn-primary" type="submit">Rechercher</button>
+  </form>
+</section>
+
+<section>
+  <div class="section-head"><h2>Catégories</h2></div>
+  <div class="category-grid">
+    {% for c in categories %}
+      <a class="card category-card" href="{{ url_for('main.search', category=c.name) }}">
+        <img src="{{ c.image_url }}" alt="">
+        <strong>{{ c.name }}</strong>
+        <span class="muted small">{{ c.count }} produit(s)</span>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>Recommandé pour vous</h2>
+    <span class="muted small">Selon vos intérêts, vos favoris et vos recherches</span>
+  </div>
+  {% if recommendations %}
+  <div class="product-grid">
+    {% for r in recommendations %}
+      {{ product_card(r.product, liked=(r.product.id in liked_ids), score=r.score, reason=r.reason) }}
+    {% endfor %}
+  </div>
+  {% else %}
+    <p class="muted">Aucune recommandation pour le moment. Ajoutez des favoris ou modifiez vos intérêts.</p>
+  {% endif %}
+</section>
+
+<section>
+  <div class="section-head"><h2>Produits populaires</h2></div>
+  <div class="product-grid">
+    {% for p in popular %}
+      {{ product_card(p, liked=(p.id in liked_ids)) }}
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

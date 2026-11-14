@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "macros.html" import product_card %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block content %}
+<section class="card product-detail">
+  <img src="{{ product.image_url }}" alt="{{ product.name }}">
+  <div>
+    <span class="tag">{{ product.category }}</span>
+    <h1>{{ product.name }}</h1>
+    <p class="meta">Marque : {{ product.brand }} · {{ product.availability }}</p>
+    <p class="price big">{{ product.price|dzd }}</p>
+    <p>{{ product.description }}</p>
+    <p class="muted small">Mots-clés : {{ product.keywords.replace(';', ', ') }}</p>
+    <form method="post" action="{{ url_for('main.toggle_favorite', product_id=product.id) }}">
+      <input type="hidden" name="next" value="{{ request.full_path }}">
+      <button class="btn like {{ 'active' if product.id in liked_ids }}" type="submit">
+        {{ '♥ Dans mes favoris' if product.id in liked_ids else '♡ Ajouter aux favoris' }}
+      </button>
+    </form>
+  </div>
+</section>
+
+<section>
+  <div class="section-head"><h2>Produits similaires</h2><span class="muted small">Similarité TF-IDF + cosinus</span></div>
+  <div class="product-grid">
+    {% for p in similar %}{{ product_card(p, liked=(p.id in liked_ids)) }}{% else %}
+      <p class="muted">Aucun produit similaire trouvé.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

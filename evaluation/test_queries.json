@@ -1,0 +1,13 @@
+[
+  {"id": "Q1", "query": "chaudière gaz", "relevant": ["P001", "P002", "P005"]},
+  {"id": "Q2", "query": "chaudière économique", "relevant": ["P001", "P003", "P006"]},
+  {"id": "Q3", "query": "radiateur", "relevant": ["P013", "P014", "P015", "P016", "P017", "P018"]},
+  {"id": "Q4", "query": "chauffe-eau", "relevant": ["P010", "P019", "P020", "P021", "P022", "P023", "P024"]},
+  {"id": "Q5", "query": "pompe à eau", "relevant": ["P032", "P033", "P034", "P035"]},
+  {"id": "Q6", "query": "robinet", "relevant": ["P037", "P038", "P039", "P040", "P041", "P042"]},
+  {"id": "Q7", "query": "thermostat", "relevant": ["P025", "P026", "P027"]},
+  {"id": "Q8", "query": "fuite", "relevant": ["P056"]},
+  {"id": "Q9", "query": "installation sanitaire", "relevant": ["P037", "P049", "P050", "P051", "P054", "P055"]},
+  {"id": "Q10", "query": "chauffage central", "relevant": ["P001", "P004", "P005", "P048", "P058", "P059"]},
+  {"id": "Q11", "query": "pompe à chaleur", "relevant": ["P007", "P008", "P009", "P010", "P011", "P012"]}
+]

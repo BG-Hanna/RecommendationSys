@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Vos intérêts{% endblock %}
+{% block content %}
+<section class="page-head">
+  <h1>Bienvenue ! Quels sont vos centres d'intérêt ?</h1>
+  <p class="muted">Choisissez un ou plusieurs thèmes. Vos recommandations commenceront à partir de ces choix.</p>
+</section>
+<form method="post" class="interest-grid">
+  {% for key, topic in interests.items() %}
+    <label class="card interest-card">
+      <input type="checkbox" name="interests" value="{{ key }}" {% if key in selected %}checked{% endif %}>
+      <span class="interest-title">{{ topic.label }}</span>
+      <span class="muted small">{{ topic.categories|join(', ') }}</span>
+    </label>
+  {% endfor %}
+  <div class="interest-actions">
+    <button class="btn btn-primary" type="submit">Enregistrer et continuer</button>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Évaluation{% endblock %}
+{% block content %}
+<section class="page-head">
+  <h1>Évaluation : Précision@{{ report.k }} et Rappel@{{ report.k }}</h1>
+  <p class="muted">Calculé sur {{ report.per_query|length }} requêtes de test dont les produits pertinents sont connus (evaluation/test_queries.json). Les mêmes requêtes sont utilisées pour TF-IDF et BM25.</p>
+</section>
+
+<section class="card">
+  <canvas id="eval-chart" height="110" data-chart='{{ report.chart|tojson }}'></canvas>
+</section>
+
+<section class="card">
+  <h2>Moyennes</h2>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Configuration</th><th>Précision@{{ report.k }}</th><th>Rappel@{{ report.k }}</th></tr></thead>
+    <tbody>
+    {% for avg in report.averages %}
+      <tr><td>{{ avg.label }}</td><td>{{ "%.3f"|format(avg.precision) }}</td><td>{{ "%.3f"|format(avg.recall) }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <p class="muted small">Précision = pertinents parmi les résultats retournés (top {{ report.k }}) ÷ nombre de résultats. Rappel = pertinents retournés ÷ nombre total de pertinents.</p>
+</section>
+
+<section class="card">
+  <h2>Détail par requête</h2>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>Requête</th><th>Pertinents</th>
+        {% for c in report.configs %}<th>{{ c }}<br><span class="small">P / R</span></th>{% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+    {% for row in report.per_query %}
+      <tr>
+        <td><strong>{{ row.query }}</strong></td>
+        <td>{{ row.relevant_count }}</td>
+        {% for c in report.configs %}
+          <td>{{ "%.2f"|format(row[c].precision) }} / {{ "%.2f"|format(row[c].recall) }}</td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}

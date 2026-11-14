@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <rect width="100" height="100" rx="18" fill="#e6f7f9"/>
+  <g fill="none" stroke="#0b7f8a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 50 q15 -25 30 0 t30 0 M25 70 h50"/>
+  </g>
+  <title>Pompe à chaleur</title>
+</svg>

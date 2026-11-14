@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Connexion{% endblock %}
+{% block content %}
+<section class="auth-wrap">
+  <div class="card auth-card">
+    <h1>Connexion</h1>
+    <p class="muted">Accédez à vos recommandations et à vos favoris.</p>
+    <form method="post" class="form">
+      <label>Nom d'utilisateur
+        <input name="username" required autocomplete="username">
+      </label>
+      <label>Mot de passe
+        <input type="password" name="password" required autocomplete="current-password">
+      </label>
+      <button class="btn btn-primary btn-block" type="submit">Se connecter</button>
+    </form>
+    <p class="muted center">Pas encore de compte ? <a href="{{ url_for('main.register') }}">Créer un compte</a></p>
+  </div>
+</section>
+{% endblock %}

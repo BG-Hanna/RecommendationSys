@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <rect width="100" height="100" rx="18" fill="#e6f7f9"/>
+  <g fill="none" stroke="#0b1f3a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 42 h56 v10 h-56 z M30 52 v18 M70 52 v18 M32 30 h36"/>
+  </g>
+  <title>Salle de bain</title>
+</svg>
