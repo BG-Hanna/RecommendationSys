@@ -26,8 +26,7 @@ METHOD_LABELS = {
 }
 
 WEIGHTS = {"original": 1.0, "synonym": 0.8, "related": 0.6,
-           "concept": 0.5, "feedback": 0.4, "automatic": 0.3}
-
+           "concept": 0.5, "feedback": 0.2, "automatic": 0.3}
 
 @dataclass
 class ExpandedQuery:
@@ -37,37 +36,50 @@ class ExpandedQuery:
     weights: dict = field(default_factory=dict)
     added: dict = field(default_factory=lambda: {m: [] for m in ALL_METHODS})
 
-    def add(self, method, term, source, phrase=None):
-        """Add one expansion term unless it is already in the query."""
+    def add(self, method, term, source, phrase=None, weight=None):
+        """Add one expansion term unless it is already in the query.
+        'weight' defaults to the weight of the method."""
         if not term or term in self.weights:
             return
-        weight = WEIGHTS[method]
+        weight = WEIGHTS[method] if weight is None else weight
         self.weights[term] = weight
         self.added[method].append({"term": term, "phrase": phrase or term,
                                    "source": source, "weight": weight})
-
     def expansion_terms(self):
         """All added terms, method by method."""
         return [row for method in ALL_METHODS for row in self.added[method]]
-
 
 def _matches(key, query_key):
     """True if the dictionary key appears as whole words inside the query."""
     return f" {key} " in f" {query_key} "
 
 
-def _expand_with_dictionary(eq, method, dictionary, query_key):
+def _active_keys(query_key, dictionaries):
+    """Dictionary keys that apply to this query, using LONGEST MATCH:
+    a key is dropped when a longer matching key contains it.
+    Example: for 'pompe chaleur' the key 'pompe' is ignored because
+    'pompe chaleur' is a more specific known expression."""
+    matching = {key for dictionary in dictionaries for key in dictionary
+                if _matches(key, query_key)}
+    return {key for key in matching
+            if not any(other != key and _matches(key, other) for other in matching)}
+
+def _expand_with_dictionary(eq, method, dictionary, active_keys):
     """Shared logic of synonyms, related terms and concepts:
-    if a dictionary key is in the query, add the tokens of its phrases."""
+    if a dictionary key is ACTIVE for this query, add the tokens of its phrases."""
     for key, phrases in dictionary.items():
-        if not _matches(key, query_key):
+        if key not in active_keys:
             continue
         for phrase in phrases:
-            for term in tokenize(phrase):
-                eq.add(method, term, source=key, phrase=phrase)
+            terms = tokenize(phrase)
+            # A phrase of n words shares the weight of ONE term (weight / n):
+            # 'generateur de chaleur' must not give 'chaleur' the full synonym weight.
+            for term in terms:
+                eq.add(method, term, source=key, phrase=phrase,
+                       weight=round(WEIGHTS[method] / len(terms), 3))
 
 
-def _expand_feedback(eq, engine, top_docs=3, n_terms=3):
+def _expand_feedback(eq, engine, top_docs=3, n_terms=2):
     """Pseudo-relevance feedback:
     1. search with the current terms (BM25),
     2. assume the top 3 products are relevant,
@@ -115,12 +127,14 @@ def expand_query(text, engine, enabled=ALL_METHODS):
     query_key = " ".join(eq.terms)
     enabled = set(enabled)
 
-    if "synonym" in enabled:
-        _expand_with_dictionary(eq, "synonym", vocab["synonyms"], query_key)
-    if "related" in enabled:
-        _expand_with_dictionary(eq, "related", vocab["related"], query_key)
-    if "concept" in enabled:
-        _expand_with_dictionary(eq, "concept", vocab["concepts"], query_key)
+    dictionaries = {"synonym": vocab["synonyms"], "related": vocab["related"],
+                    "concept": vocab["concepts"]}
+    chosen = {m: d for m, d in dictionaries.items() if m in enabled}
+    # Longest match is computed ONLY among the enabled dictionaries, so that
+    # "related only" in the ablation study really means related only.
+    active = _active_keys(query_key, chosen.values())
+    for method, dictionary in chosen.items():
+        _expand_with_dictionary(eq, method, dictionary, active)
     if "feedback" in enabled:
         _expand_feedback(eq, engine)
     if "automatic" in enabled:

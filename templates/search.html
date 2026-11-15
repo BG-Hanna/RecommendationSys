@@ -20,6 +20,22 @@
         {% endfor %}
       </select>
     </label>
+        <label>Énergie
+      <select name="energie">
+        <option value="">Toutes énergies</option>
+        {% for value, n in energies %}
+          <option value="{{ value }}" {% if value == energy %}selected{% endif %}>{{ value }} ({{ n }})</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Matériau
+      <select name="materiau">
+        <option value="">Tous matériaux</option>
+        {% for value, n in materials %}
+          <option value="{{ value }}" {% if value == material %}selected{% endif %}>{{ value }} ({{ n }})</option>
+        {% endfor %}
+      </select>
+    </label>
     <label>Budget minimum (DZD)
       <input type="number" name="min" min="0" value="{{ budget.min or '' }}">
     </label>
@@ -34,6 +50,9 @@
         <option value="1" {% if budget.strict %}selected{% endif %}>Strict : masquer hors budget</option>
         <option value="0" {% if not budget.strict %}selected{% endif %}>Souple : afficher en dernier</option>
       </select>
+    </label>
+        <label class="check-row">
+      <input type="checkbox" name="stock" value="1" {% if in_stock %}checked{% endif %}> En stock uniquement
     </label>
     <button class="btn btn-primary" type="submit">Appliquer</button>
   </div>

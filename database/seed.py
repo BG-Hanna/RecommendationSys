@@ -19,18 +19,32 @@ def load_products_from_csv(path=CSV_FILE):
         return list(csv.DictReader(handle))
 
 
+def _number(value):
+    """CSV text -> float, or None when the cell is empty."""
+    value = (value or "").strip()
+    return float(value) if value else None
+
+
 def seed_products():
     """Insert the products only if the table is empty. Returns the number inserted."""
     if Product.query.first() is not None:
         return 0
     rows = load_products_from_csv()
     for row in rows:
-        db.session.add(Product(
-            id=row["id"], name=row["name"], category=row["category"],
-            description=row["description"], keywords=row["keywords"], brand=row["brand"],
-            price=int(row["price"]), image_url=row["image_url"],
-            availability=row["availability"],
-        ))
+        # Product(**fields): same as Product(id=..., name=...), but keeps the editor quiet
+        fields = {
+            "id": row["id"], "name": row["name"], "category": row["category"],
+            "description": row["description"], "keywords": row["keywords"],
+            "brand": row["brand"], "price": int(row["price"]),
+            "image_url": row["image_url"], "availability": row["availability"],
+            "type_produit": row.get("type_produit", ""),
+            "type_energie": row.get("type_energie", ""),
+            "materiau": row.get("materiau", ""),
+            "puissance_kw": _number(row.get("puissance_kw")),
+            "capacite_litres": _number(row.get("capacite_litres")),
+            "superficie_m2": _number(row.get("superficie_m2")),
+        }
+        db.session.add(Product(**fields))
     db.session.commit()
     return len(rows)
 

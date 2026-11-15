@@ -1,72 +1,261 @@
 {
   "synonyms": {
-    "chaudiere": ["chaudiere a gaz", "chaudiere electrique", "generateur de chaleur"],
-    "robinet": ["mitigeur", "robinetterie"],
-    "chauffage": ["systeme de chauffage"],
-    "radiateur": ["convecteur", "emetteur de chaleur"],
-    "pompe": ["circulateur", "surpresseur"],
-    "tuyau": ["tube", "canalisation", "conduite"],
-    "fuite": ["goutte", "suintement", "infiltration"],
-    "thermostat": ["regulateur", "commande de temperature"],
-    "wc": ["toilette", "cuvette"],
-    "climatisation": ["climatiseur", "split"],
-    "chauffe eau": ["ballon d eau chaude", "cumulus"]
+    "cumulus": [
+      "chauffe-eau"
+    ],
+    "ballon d'eau chaude": [
+      "chauffe-eau"
+    ],
+    "thermopompe": [
+      "pompe à chaleur"
+    ],
+    "pac": [
+      "pompe à chaleur"
+    ],
+    "climatiseur": [
+      "mini split",
+      "pompe à chaleur"
+    ],
+    "climatisation": [
+      "mini split",
+      "pompe à chaleur"
+    ],
+    "convecteur": [
+      "radiateur",
+      "plinthe chauffante"
+    ],
+    "toilette": [
+      "wc",
+      "cuvette"
+    ],
+    "canalisation": [
+      "tuyau",
+      "tube"
+    ],
+    "conduite": [
+      "tuyau",
+      "tube"
+    ],
+    "tuyau": [
+      "tube"
+    ],
+    "tube": [
+      "tuyau"
+    ],
+    "robinet": [
+      "mitigeur",
+      "vanne",
+      "robinetterie"
+    ],
+    "mitigeur": [
+      "robinet"
+    ],
+    "vide cave": [
+      "pompe de relevage"
+    ],
+    "pompe de relevage": [
+      "vide cave"
+    ],
+    "douchette": [
+      "pomme de douche"
+    ],
+    "pomme de douche": [
+      "douchette"
+    ],
+    "lavabo": [
+      "évier",
+      "vasque"
+    ],
+    "évier": [
+      "lavabo"
+    ],
+    "siphon": [
+      "bonde",
+      "vidage"
+    ],
+    "bonde": [
+      "siphon",
+      "vidage"
+    ],
+    "fournaise": [
+      "générateur d'air chaud"
+    ],
+    "générateur d'air chaud": [
+      "fournaise"
+    ],
+    "osmoseur": [
+      "osmose inverse"
+    ],
+    "osmose inverse": [
+      "osmoseur"
+    ]
   },
   "related": {
-    "chaudiere": ["radiateur", "thermostat", "chauffage"],
-    "pompe": ["pression", "debit"],
-    "chauffe eau": ["ballon", "eau chaude"],
-    "radiateur": ["chauffage", "purgeur"],
-    "robinet": ["lavabo", "douche", "eau"],
-    "tuyau": ["raccord", "per", "cuivre"],
-    "fuite": ["joint", "colle", "reparation"],
-    "salle de bain": ["lavabo", "douche", "wc"],
-    "thermostat": ["regulation", "programmable"]
+    "chaudière": [
+      "fournaise",
+      "chauffage mural"
+    ],
+    "chauffe-eau": [
+      "accumulation",
+      "instantané"
+    ],
+    "radiateur": [
+      "plinthe chauffante",
+      "chauffage"
+    ],
+    "chauffage": [
+      "radiateur",
+      "thermostat",
+      "chaudière"
+    ],
+    "fuite": [
+      "étanchéité",
+      "colle",
+      "soudure"
+    ],
+    "robinet": [
+      "lavabo",
+      "douche",
+      "baignoire",
+      "cuisine"
+    ],
+    "douche": [
+      "cabine",
+      "paroi",
+      "receveur",
+      "douchette"
+    ],
+    "baignoire": [
+      "balnéo",
+      "acrylique"
+    ],
+    "salle de bain": [
+      "lavabo",
+      "douche",
+      "wc",
+      "baignoire"
+    ],
+    "tuyau": [
+      "raccord",
+      "pvc",
+      "cuivre",
+      "flexible"
+    ],
+    "pompe": [
+      "circulateur",
+      "relevage",
+      "immergée"
+    ],
+    "pompe de relevage": [
+      "immergée"
+    ],
+    "pompe à chaleur": [
+      "chauffage"
+    ],
+    "thermostat": [
+      "programmable",
+      "connecté",
+      "régulation"
+    ]
   },
   "concepts": {
-    "chauffage central": ["chaudiere", "radiateur", "tuyauterie", "thermostat"],
-    "installation sanitaire": ["lavabo", "robinetterie", "evacuation"],
-    "production d eau chaude": ["chauffe eau", "ballon thermodynamique"]
+    "chauffage central": [
+      "chaudière",
+      "radiateur",
+      "thermostat",
+      "circulateur",
+      "vase d'expansion"
+    ],
+    "installation sanitaire": [
+      "lavabo",
+      "robinetterie",
+      "évacuation",
+      "wc",
+      "siphon"
+    ],
+    "eau chaude": [
+      "chauffe-eau",
+      "accumulation",
+      "instantané"
+    ],
+    "traitement de l'eau": [
+      "adoucisseur",
+      "filtre à eau",
+      "osmoseur"
+    ],
+    "chauffage d'appoint": [
+      "plinthe chauffante",
+      "radiateur soufflant",
+      "radiateur radiant",
+      "portable"
+    ],
+    "plomberie": [
+      "tuyau",
+      "raccord",
+      "robinet",
+      "vanne"
+    ]
   },
   "interests": {
     "heating_systems": {
       "label": "Systèmes de chauffage",
-      "categories": ["Chaudières", "Pompes à chaleur", "Thermostats et régulation"],
+      "categories": [
+        "Chaudières",
+        "Pompes à chaleur",
+        "Thermostats et régulation"
+      ],
       "keywords": "chauffage chaudiere pompe a chaleur thermostat radiateur"
     },
     "boilers": {
       "label": "Chaudières",
-      "categories": ["Chaudières"],
+      "categories": [
+        "Chaudières"
+      ],
       "keywords": "chaudiere gaz condensation chauffage central"
     },
     "radiators": {
       "label": "Radiateurs",
-      "categories": ["Radiateurs"],
+      "categories": [
+        "Radiateurs"
+      ],
       "keywords": "radiateur chauffage acier fonte convecteur"
     },
     "water_heaters": {
       "label": "Chauffe-eau",
-      "categories": ["Chauffe-eau"],
+      "categories": [
+        "Chauffe-eau"
+      ],
       "keywords": "chauffe eau ballon eau chaude sanitaire"
     },
     "plumbing": {
       "label": "Plomberie",
-      "categories": ["Tuyauterie et raccords", "Robinetterie"],
+      "categories": [
+        "Tuyauterie et raccords",
+        "Robinetterie"
+      ],
       "keywords": "plomberie tuyau raccord robinet canalisation"
     },
     "water_pumps": {
       "label": "Pompes à eau",
-      "categories": ["Pompes et circulateurs"],
+      "categories": [
+        "Pompes et circulateurs"
+      ],
       "keywords": "pompe eau surpresseur pression debit"
     },
     "bathroom": {
       "label": "Salle de bain",
-      "categories": ["Salle de bain", "Robinetterie"],
+      "categories": [
+        "Salle de bain",
+        "Robinetterie"
+      ],
       "keywords": "salle de bain lavabo douche wc sanitaire"
     },
     "installation_repair": {
       "label": "Installation et réparation",
-      "categories": ["Accessoires", "Tuyauterie et raccords"],
+      "categories": [
+        "Accessoires",
+        "Tuyauterie et raccords"
+      ],
       "keywords": "installation reparation fuite joint purgeur vase"
     }
   }

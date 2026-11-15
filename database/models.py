@@ -34,8 +34,7 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
 
     def interest_keys(self):
-        return [row.interest for row in self.interest_rows]
-
+        return [row.interest for row in self.interest_rows]  # type: ignore
 
 class Product(db.Model):
     __tablename__ = "products"
@@ -49,12 +48,22 @@ class Product(db.Model):
     price = db.Column(db.Integer, nullable=False)        # DZD
     image_url = db.Column(db.String(200), nullable=False)
     availability = db.Column(db.String(60), nullable=False)
+    # structured attributes (may be empty); used for display, filters and evaluation rules
+    type_produit = db.Column(db.String(120), nullable=False, default="")
+    type_energie = db.Column(db.String(30), nullable=False, default="")
+    materiau = db.Column(db.String(120), nullable=False, default="")   # "acier émaillé, métal"
+    puissance_kw = db.Column(db.Float, nullable=True)
+    capacite_litres = db.Column(db.Float, nullable=True)
+    superficie_m2 = db.Column(db.Float, nullable=True)
 
     def to_dict(self):
         return {"id": self.id, "name": self.name, "category": self.category,
                 "description": self.description, "keywords": self.keywords,
                 "brand": self.brand, "price": self.price, "image_url": self.image_url,
-                "availability": self.availability}
+                "availability": self.availability, "type_produit": self.type_produit,
+                "type_energie": self.type_energie, "materiau": self.materiau,
+                "puissance_kw": self.puissance_kw,
+                "capacite_litres": self.capacite_litres, "superficie_m2": self.superficie_m2}
 
 
 class UserInterest(db.Model):

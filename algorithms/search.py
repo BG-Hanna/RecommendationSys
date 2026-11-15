@@ -13,6 +13,7 @@ from algorithms.query_expansion import ALL_METHODS, expand_query
 from algorithms.tfidf import TfidfModel
 
 PRICE_TOLERANCE = 0.10   # +/-10 % around an exact budget
+MAX_DF_RATIO = 0.25      # a word in more than 25 % of the products is too common to expand with
 
 
 def product_document(product):
@@ -49,13 +50,19 @@ class SearchEngine:
         documents = [product_document(p) for p in products]
         self.doc_tokens = [tokenize(d) for d in documents]
         self.doc_term_sets = [set(t) for t in self.doc_tokens]
-        # Domain vocabulary: words of the product keywords only (no brands, no numbers).
-        # Automatic and feedback expansion may only add these words.
-        self.domain_vocabulary = {t for p in products for t in tokenize(p["keywords"])
-                                  if not t.isdigit()}
         self.df = Counter()                       # number of products containing each term
         for terms in self.doc_term_sets:
             self.df.update(terms)
+        # Domain vocabulary = words of the product keywords that feedback and automatic
+        # expansion are allowed to ADD. Three exclusions:
+        #   - numbers,
+        #   - brand names (rheem, danco...): the keywords column contains the brand,
+        #   - words in more than MAX_DF_RATIO of the products ('chauffe', 'eau'...): too common.
+        brand_tokens = {t for p in products for t in tokenize(p["brand"])}
+        too_common = MAX_DF_RATIO * len(products)
+        self.domain_vocabulary = {t for p in products for t in tokenize(p["keywords"])
+                                  if not t.isdigit() and t not in brand_tokens
+                                  and self.df[t] <= too_common}
         self.tfidf = TfidfModel(documents)
         self.bm25 = Bm25Model(self.doc_tokens)
 
