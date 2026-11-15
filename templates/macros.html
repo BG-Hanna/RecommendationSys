@@ -7,7 +7,7 @@
   <div class="product-body">
     <span class="tag">{{ p.category }}</span>
     <h3><a href="{{ url_for('main.product_detail', product_id=p.id) }}">{{ p.name }}</a></h3>
-    <p class="meta">{{ p.brand }} · {{ p.availability }}</p>
+    <p class="meta">{{ p.brand }} · {{ p.availability }}{% if p.type_energie %} · {{ p.type_energie }}{% endif %}</p>
     <p class="price">{{ p.price|dzd }}</p>
     {% if score is not none %}<p class="score">Score : {{ "%.3f"|format(score) }}</p>{% endif %}
     {% if not in_budget %}<span class="badge badge-warn">Hors budget</span>{% endif %}

@@ -10,6 +10,22 @@
     <p class="meta">Marque : {{ product.brand }} · {{ product.availability }}</p>
     <p class="price big">{{ product.price|dzd }}</p>
     <p>{{ product.description }}</p>
+        {% set specs = [
+      ('Type', product.type_produit),
+      ('Énergie', product.type_energie),
+      ('Matériau', product.materiau),
+      ('Puissance', ("%g kW"|format(product.puissance_kw)) if product.puissance_kw else ''),
+      ('Capacité', ("%g L"|format(product.capacite_litres)) if product.capacite_litres else ''),
+      ('Superficie', ("%g m²"|format(product.superficie_m2)) if product.superficie_m2 else '')
+    ] %}
+    {% set filled = specs|selectattr('1')|list %}
+    {% if filled %}
+    <table class="specs">
+      {% for label, value in filled %}
+        <tr><th>{{ label }}</th><td>{{ value }}</td></tr>
+      {% endfor %}
+    </table>
+    {% endif %}
     <p class="muted small">Mots-clés : {{ product.keywords.replace(';', ', ') }}</p>
     <form method="post" action="{{ url_for('main.toggle_favorite', product_id=product.id) }}">
       <input type="hidden" name="next" value="{{ request.full_path }}">
@@ -21,7 +37,7 @@
 </section>
 
 <section>
-  <div class="section-head"><h2>Produits similaires</h2><span class="muted small">Similarité TF-IDF + cosinus</span></div>
+  <div class="section-head"><h2>Produits similaires</h2><span class="muted small">Similarité TF-IDF + cosinus + même type de produit</span></div>
   <div class="product-grid">
     {% for p in similar %}{{ product_card(p, liked=(p.id in liked_ids)) }}{% else %}
       <p class="muted">Aucun produit similaire trouvé.</p>

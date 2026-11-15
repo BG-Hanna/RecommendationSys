@@ -14,14 +14,17 @@ from algorithms.tfidf import TfidfModel
 
 PRICE_TOLERANCE = 0.10   # +/-10 % around an exact budget
 MAX_DF_RATIO = 0.25      # a word in more than 25 % of the products is too common to expand with
-
+SAME_TYPE_BONUS = 0.15   # added to the TF-IDF cosine when two products have the same type_produit
 
 def product_document(product):
     """Text indexed for one product: name, category, description, keywords, brand."""
     keywords = product["keywords"].replace(";", " ")
     return " ".join([product["name"], product["category"], product["description"],
                      keywords, product["brand"]])
-
+    
+def is_out_of_domain(product):
+    """True for the 'Article hors domaine' products (decoration, hardware, appliances)."""
+    return "hors domaine" in (product.get("type_produit") or "").lower()
 
 def make_budget(min_value=None, max_value=None, exact_value=None, strict=True):
     """Budget preferences. 'strict' = hide products that do not fit."""
@@ -106,6 +109,17 @@ class SearchEngine:
         return eq, ranked
 
     def similar_products(self, product_id, n=4):
-        """Products most similar to one product (TF-IDF cosine)."""
+        """Products most similar to one product: TF-IDF cosine + a bonus for the same
+        type_produit, so a gas boiler suggests gas boilers. Out-of-domain products are
+        never suggested for a normal product."""
         idx = self.index_by_id[product_id]
-        return [self.products[i] for i in self.tfidf.similar_to(idx, n)]
+        base = self.products[idx]
+        scores = self.tfidf.similarities(idx)
+        for i, p in enumerate(self.products):
+            if p["type_produit"] and p["type_produit"] == base["type_produit"]:
+                scores[i] += SAME_TYPE_BONUS
+            if is_out_of_domain(p) and not is_out_of_domain(base):
+                scores[i] = 0
+        scores[idx] = 0
+        order = np.argsort(-scores, kind="stable")[:n]
+        return [self.products[int(i)] for i in order if scores[i] > 0]

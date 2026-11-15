@@ -12,7 +12,7 @@ Recommendations change when the user likes products or searches.
 
 import numpy as np
 
-from algorithms.search import price_in_budget, product_document
+from algorithms.search import is_out_of_domain, price_in_budget, product_document
 from algorithms.vocabulary import load_vocabulary
 
 W_CONTENT = 0.5
@@ -70,6 +70,8 @@ def recommend(engine, context, popularity, top_n=8):
     for idx in np.argsort(-final, kind="stable"):
         product = products[idx]
         if final[idx] <= 0 or product["id"] in liked_set:
+            continue
+        if is_out_of_domain(product):
             continue
         if not price_in_budget(product["price"], context.get("budget")):
             continue

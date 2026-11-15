@@ -4,6 +4,7 @@ All the intelligence lives in algorithms/ and evaluation/.
 """
 
 from datetime import datetime
+from collections import Counter
 from functools import wraps
 
 from flask import (Blueprint, abort, current_app, flash, g, jsonify, redirect,
@@ -12,8 +13,9 @@ from sqlalchemy import func
 
 from algorithms.preprocessing import normalize_text, tokenize
 from algorithms.query_expansion import ALL_METHODS, METHOD_LABELS
+DICTIONARY_METHODS = ("synonym", "related", "concept")
 from algorithms.recommendations import recommend
-from algorithms.search import make_budget, price_in_budget
+from algorithms.search import is_out_of_domain, make_budget, price_in_budget
 from algorithms.vocabulary import load_vocabulary
 from database.db import db
 from database.models import Favorite, Product, SearchHistory, User, UserInterest
@@ -85,6 +87,16 @@ def category_summary(products):
         entry["count"] += 1
     return sorted(summary.values(), key=lambda c: c["name"])
 
+def material_of(product):
+    """'acier émaillé, métal' -> 'acier émaillé' (specific material only)."""
+    return (product["materiau"] or "").split(",")[0].strip()
+
+
+def facet_options(results, getter):
+    """(value, count) pairs among the current results; empty values are ignored."""
+    counts = Counter(getter(r["product"]) or "" for r in results)
+    counts.pop("", None)
+    return sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))
 
 def log_search(user, query, expanded_terms):
     """Store a search, unless it is identical to the previous one (e.g. filter changes)."""
@@ -216,7 +228,8 @@ def home():
     engine = get_engine()
     popularity = popularity_counts()
     recommendations = recommend(engine, user_context(g.user), popularity, top_n=8)
-    popular = sorted(engine.products, key=lambda p: (-popularity.get(p["id"], 0), p["id"]))[:6]
+    popular = sorted((p for p in engine.products if not is_out_of_domain(p)),
+                     key=lambda p: (-popularity.get(p["id"], 0), p["id"]))[:6]
     return render_template("home.html", recommendations=recommendations, popular=popular,
                            categories=category_summary(engine.products))
 
@@ -230,7 +243,7 @@ def search():
     budget = budget_from_request(request.args)
     terms = []
     if query:
-        eq, ranked = engine.search(query, "bm25", ALL_METHODS)   # customers use BM25
+        eq, ranked = engine.search(query, "bm25", DICTIONARY_METHODS)   # customers: BM25 + dictionaries
         results = engine.build_results(ranked, budget)
         terms = [row["term"] for row in eq.expansion_terms()]
         log_search(g.user, query, terms)
@@ -238,10 +251,29 @@ def search():
         results = engine.build_results([(i, None) for i in range(len(engine.products))], budget)
     if category:
         results = [r for r in results if r["product"]["category"] == category]
+
+    # Dropdown options are counted on the results BEFORE the energy/material/stock
+    # filters, so an option never leads to an empty page.
+    energies = facet_options(results, lambda p: p["type_energie"])
+    materials = facet_options(results, material_of)
+
+    energy = request.args.get("energie", "")
+    material = request.args.get("materiau", "")
+    in_stock = request.args.get("stock") == "1"
+    if energy:
+        results = [r for r in results if r["product"]["type_energie"] == energy]
+    if material:
+        results = [r for r in results if material_of(r["product"]) == material]
+    if in_stock:
+        results = [r for r in results if r["product"]["availability"] == "En stock"]
+    for position, row in enumerate(results, start=1):   # no gaps in ranks after filtering
+        row["rank"] = position
+
     categories = sorted({p["category"] for p in engine.products})
     return render_template("search.html", query=query, category=category, budget=budget,
-                           results=results, terms=terms, categories=categories)
-
+                           results=results, terms=terms, categories=categories,
+                           energies=energies, materials=materials,
+                           energy=energy, material=material, in_stock=in_stock)
 
 @bp.route("/product/<product_id>")
 @login_required

@@ -62,3 +62,7 @@ class TfidfModel:
         sims[doc_index] = 0
         order = np.argsort(-sims)[:n]
         return [int(i) for i in order if sims[i] > 0]
+    
+    def similarities(self, doc_index):
+        """Cosine similarity between one product and every product (itself included)."""
+        return cosine_similarity(self.matrix[doc_index], self.matrix).ravel()

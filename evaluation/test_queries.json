@@ -1,13 +1,185 @@
 [
-  {"id": "Q1", "query": "chaudière gaz", "relevant": ["P001", "P002", "P005"]},
-  {"id": "Q2", "query": "chaudière économique", "relevant": ["P001", "P003", "P006"]},
-  {"id": "Q3", "query": "radiateur", "relevant": ["P013", "P014", "P015", "P016", "P017", "P018"]},
-  {"id": "Q4", "query": "chauffe-eau", "relevant": ["P010", "P019", "P020", "P021", "P022", "P023", "P024"]},
-  {"id": "Q5", "query": "pompe à eau", "relevant": ["P032", "P033", "P034", "P035"]},
-  {"id": "Q6", "query": "robinet", "relevant": ["P037", "P038", "P039", "P040", "P041", "P042"]},
-  {"id": "Q7", "query": "thermostat", "relevant": ["P025", "P026", "P027"]},
-  {"id": "Q8", "query": "fuite", "relevant": ["P056"]},
-  {"id": "Q9", "query": "installation sanitaire", "relevant": ["P037", "P049", "P050", "P051", "P054", "P055"]},
-  {"id": "Q10", "query": "chauffage central", "relevant": ["P001", "P004", "P005", "P048", "P058", "P059"]},
-  {"id": "Q11", "query": "pompe à chaleur", "relevant": ["P007", "P008", "P009", "P010", "P011", "P012"]}
+  {
+    "id": "Q1",
+    "query": "chaudière gaz",
+    "match": {
+      "type_produit": "^Chaudière",
+      "type_energie": "^gaz$"
+    },
+    "group": "catalogue"
+  },
+  {
+    "id": "Q2",
+    "query": "chaudière fioul",
+    "match": {
+      "type_produit": "^Chaudière",
+      "type_energie": "^fioul$"
+    },
+    "group": "catalogue"
+  },
+  {
+    "id": "Q3",
+    "query": "radiateur",
+    "match": {
+      "category": "^Radiateurs$"
+    },
+    "exclude": {
+      "type_produit": "hors domaine|^Cache|^Accessoire"
+    },
+    "group": "catalogue"
+  },
+  {
+    "id": "Q4",
+    "query": "chauffe-eau électrique",
+    "match": {
+      "type_produit": "^Chauffe-eau",
+      "type_energie": "^électrique$"
+    },
+    "group": "catalogue"
+  },
+  {
+    "id": "Q5",
+    "query": "chauffe-eau gaz",
+    "match": {
+      "type_produit": "^Chauffe-eau",
+      "type_energie": "^gaz$"
+    },
+    "group": "catalogue"
+  },
+  {
+    "id": "Q6",
+    "query": "pompe à chaleur",
+    "match": {
+      "type_produit": "^Pompe à chaleur"
+    },
+    "group": "catalogue"
+  },
+  {
+    "id": "Q7",
+    "query": "pompe de relevage",
+    "match": {
+      "type_produit": "^Pompe de relevage"
+    },
+    "group": "catalogue"
+  },
+  {
+    "id": "Q8",
+    "query": "thermostat",
+    "match": {
+      "type_produit": "^Thermostat"
+    },
+    "group": "catalogue"
+  },
+  {
+    "id": "Q9",
+    "query": "robinet",
+    "match": {
+      "type_produit": "^(Robinet|Mitigeur|Vanne)"
+    },
+    "group": "catalogue"
+  },
+  {
+    "id": "Q10",
+    "query": "wc",
+    "match": {
+      "type_produit": "^WC"
+    },
+    "group": "catalogue"
+  },
+  {
+    "id": "Q11",
+    "query": "baignoire",
+    "match": {
+      "type_produit": "^Baignoire"
+    },
+    "group": "catalogue"
+  },
+  {
+    "id": "Q12",
+    "query": "plinthe chauffante",
+    "match": {
+      "type_produit": "^Plinthe chauffante"
+    },
+    "group": "catalogue"
+  },
+  {
+    "id": "Q13",
+    "query": "fuite",
+    "match": {
+      "type_produit": "^Colle / étanchéité"
+    },
+    "group": "catalogue"
+  },
+  {
+    "id": "Q14",
+    "query": "chauffage central",
+    "match": {
+      "type_produit": "^(Chaudière|Radiateur|Thermostat)"
+    },
+    "group": "catalogue"
+  },
+  {
+    "id": "M1",
+    "query": "cumulus",
+    "group": "vocabulaire_absent",
+    "match": {
+      "type_produit": "^Chauffe-eau"
+    }
+  },
+  {
+    "id": "M2",
+    "query": "ballon d'eau chaude",
+    "group": "vocabulaire_absent",
+    "match": {
+      "type_produit": "^Chauffe-eau"
+    }
+  },
+  {
+    "id": "M3",
+    "query": "thermopompe",
+    "group": "vocabulaire_absent",
+    "match": {
+      "type_produit": "^Pompe à chaleur"
+    }
+  },
+  {
+    "id": "M4",
+    "query": "climatiseur",
+    "group": "vocabulaire_absent",
+    "match": {
+      "type_produit": "^Pompe à chaleur"
+    }
+  },
+  {
+    "id": "M5",
+    "query": "canalisation",
+    "group": "vocabulaire_absent",
+    "match": {
+      "type_produit": "^Tuyau"
+    }
+  },
+  {
+    "id": "M6",
+    "query": "toilette",
+    "group": "vocabulaire_absent",
+    "match": {
+      "type_produit": "^WC"
+    }
+  },
+  {
+    "id": "M7",
+    "query": "traitement de l'eau",
+    "group": "vocabulaire_absent",
+    "match": {
+      "type_produit": "^(Adoucisseur|Osmoseur|Filtre à eau (en ligne|pour toute la maison|pour évier))"
+    }
+  },
+  {
+    "id": "M8",
+    "query": "chauffage d'appoint",
+    "group": "vocabulaire_absent",
+    "match": {
+      "type_produit": "^(Plinthe chauffante|Radiateur)"
+    }
+  }
 ]
