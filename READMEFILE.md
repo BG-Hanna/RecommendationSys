@@ -1,4 +1,4 @@
-# 🔧 Moteur de recherche et de recommandation – Chauffage & Plomberie
+# Moteur de recherche et de recommandation – Chauffage & Plomberie
 
 Application web (Flask) qui permet de **chercher** et de **se faire recommander** des produits de chauffage et de plomberie (chaudières, radiateurs, chauffe-eau, pompes, robinetterie…).
 
@@ -121,8 +121,6 @@ Chaque mot reçoit un **poids**. Le mot de l'utilisateur est le plus important ;
 | Automatique | 0.3 | mot qui apparaît souvent avec la requête dans le catalogue |
 | Feedback | 0.2 | mot important des 3 meilleurs produits |
 
-> Remarque : le commentaire en haut du fichier indique `feedback 0.4`, mais la valeur réellement utilisée dans le code (`WEIGHTS`) est **0.2**.
-
 ### Pourquoi des poids et pas simplement « ajouter des mots » ?
 
 Si on ajoute `chauffe-eau` avec le même poids que `cumulus`, la requête dérive facilement. Avec des poids, **le mot de l'utilisateur reste le patron** et les ajouts ne font qu'aider.
@@ -157,15 +155,6 @@ Sans dictionnaire : on regarde quels mots **apparaissent dans les mêmes produit
 
 et on garde les 3 meilleurs.
 
-### Les « garde-fous » (choix importants)
-
-| Problème | Solution | Pourquoi |
-|---|---|---|
-| `pompe` et `pompe à chaleur` sont tous deux dans le dictionnaire | **Plus longue correspondance** (*longest match*) : on ignore `pompe` si `pompe chaleur` est trouvé | Sinon on ajouterait `circulateur`, `immergée`… pour une pompe à chaleur ! |
-| `chauffe-eau` = 2 mots (`chauffe`, `eau`) : `eau` recevrait tout le poids d'un synonyme | **Le poids est divisé par le nombre de mots** de l'expression (0.8 / 2 = 0.4 chacun) | `eau` seul est trop général |
-| Le feedback pourrait ajouter des marques (`rheem`), des chiffres ou des mots partout (`eau`) | **Vocabulaire du domaine** : on exclut chiffres, marques et mots présents dans > 25 % des produits | On n'ajoute que des mots réellement utiles |
-| Un terme déjà dans la requête | `add()` ignore les doublons | Le mot original garde son poids 1.0 |
-
 ### Exemple complet
 
 Requête : `"chaudière gaz"`
@@ -182,11 +171,6 @@ Termes identifiés :  chaudiere (1.0)   gaz (1.0)
 ### Pourquoi des dictionnaires dans un fichier JSON ?
 - **Lisible et modifiable** sans toucher au code (un expert plomberie peut ajouter des mots).
 - **Transparent** : chaque terme ajouté garde sa source (`source=...`), ce qui permet d'afficher dans l'interface *pourquoi* un mot a été ajouté (« Query Expansion Inspector »).
-
-### Pourquoi pas WordNet / word embeddings / un LLM pour les synonymes ?
-- WordNet français est pauvre pour le vocabulaire technique (*cumulus*, *thermopompe*, *vide-cave*… vocabulaire algérien/québécois/français).
-- Des embeddings demandent un gros modèle, sont difficiles à expliquer et peuvent proposer des mots hors sujet.
-- Un petit dictionnaire fait main est **précis, explicable, gratuit et rapide**. Son défaut (il faut l'écrire) est assumé et mesuré par l'évaluation.
 
 ---
 
@@ -208,18 +192,6 @@ Même idée, avec deux améliorations :
 
 Les termes pondérés sont gérés simplement : on score chaque terme séparément, puis on additionne `poids × score`.
 
-### Pourquoi garder les deux ?
-Le sujet de l'exercice dit « TF-IDF, BM25 ou modèles neuronaux ». Garder **les deux** permet de les **comparer sur nos données** au lieu de choisir à l'aveugle (voir section 9).
-
-### Pourquoi pas un modèle neuronal (BERT, sentence-transformers…) ?
-| | TF-IDF / BM25 | Neuronal |
-|---|---|---|
-| Taille / dépendances | Très léger | Modèle de centaines de Mo, souvent GPU |
-| Explicable | Oui (on voit les mots) | Non (boîte noire) |
-| Données d'entraînement | Aucune | Il faut adapter au domaine |
-| Catalogue de ~2000 produits | Largement suffisant | Surdimensionné |
-
-Notre but pédagogique est de **comprendre et expliquer chaque étape** : les méthodes classiques sont donc le bon choix. Un modèle neuronal serait une amélioration future.
 
 ---
 
@@ -333,23 +305,6 @@ python -m evaluation.run_ablation    # tableau de comparaison des méthodes
 Bibliothèques : `Flask`, `Flask-SQLAlchemy`, `scikit-learn` (TF-IDF, cosinus), `rank-bm25`, `numpy`.
 
 > En production, définir la variable d'environnement `SECRET_KEY` (la valeur par défaut est uniquement pour le développement).
-
----
-
-## 12. Résumé des choix « pourquoi ça et pas autre chose »
-
-| Choix | Alternative écartée | Raison |
-|---|---|---|
-| Dictionnaires JSON faits main | WordNet, embeddings, LLM | précis, explicable, adapté au vocabulaire du métier |
-| Poids décroissants par méthode | tous les termes à 1.0 | le mot de l'utilisateur reste prioritaire |
-| Plus longue correspondance | tout appliquer | évite les ajouts hors sujet (`pompe` vs `pompe à chaleur`) |
-| Poids divisé par la longueur de l'expression | poids plein | un mot générique (`eau`) ne doit pas dominer |
-| Vocabulaire du domaine filtré | tous les mots | pas de marques, chiffres ni mots trop courants |
-| TF-IDF **et** BM25 | un seul modèle | les comparer sur nos données |
-| Méthodes classiques | BERT / neuronal | léger, explicable, suffisant pour ~2000 produits |
-| Recommandation hybride | collaboratif pur | fonctionne sans historique (cold start) |
-| Pertinence par règles | étiquetage manuel | impossible à la main avec 2000 produits, règles lisibles |
-| Même `tokenize()` partout | traitements séparés | produits et requêtes parlent la même « langue » |
 
 ---
 
